@@ -3,18 +3,47 @@
  */
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { subscriptionService } from '../services/module2'
-import { SubscriptionWithDetails } from '../types'
-import { Button } from '../components/ui/Button'
-import { Card } from '../components/ui/Card'
-import { Navigation } from '../components/Navigation'
-import { CreateSubscriptionModal } from '../components/CreateSubscriptionModal'
+import { subscriptionService } from '@/services/module2'
+import { SubscriptionWithDetails } from '@/types'
+import { Button } from '@/components/ui/Button'
+import { Card } from '@/components/ui/Card'
 
 export function SubscriptionsPage() {
   const [page, setPage] = useState(1)
   const [statusFilter, setStatusFilter] = useState<string>('')
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
+  const [showCreateModal, setShowCreateModal] = useState(false)
+  const [formData, setFormData] = useState({
+    customer_id: '',
+    plan_id: '',
+    start_date: new Date().toISOString().split('T')[0],
+    status: 'active',
+    auto_renew: true,
+  })
   const queryClient = useQueryClient()
+
+  // Fetch customers for dropdown
+  const { data: customersData } = useQuery({
+    queryKey: ['customers-dropdown'],
+    queryFn: () =>
+      subscriptionService.getCustomers({
+        page: 1,
+        pageSize: 1000,
+        status: 'active',
+      }),
+    enabled: showCreateModal,
+  })
+
+  // Fetch plans for dropdown  
+  const { data: plansData } = useQuery({
+    queryKey: ['plans-dropdown'],
+    queryFn: () =>
+      subscriptionService.getPlans({
+        page: 1,
+        pageSize: 1000,
+        status: 'active',
+      }),
+    enabled: showCreateModal,
+  })
 
   // Fetch subscriptions with filters
   const { data, isLoading, error } = useQuery({
@@ -25,6 +54,22 @@ export function SubscriptionsPage() {
         pageSize: 20,
         status: statusFilter || undefined,
       }),
+  })
+
+  // Create subscription mutation
+  const createMutation = useMutation({
+    mutationFn: (data: any) => subscriptionService.createSubscription(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['subscriptions'] })
+      setShowCreateModal(false)
+      setFormData({
+        customer_id: '',
+        plan_id: '',
+        start_date: new Date().toISOString().split('T')[0],
+        status: 'active',
+        auto_renew: true,
+      })
+    },
   })
 
   // Pause subscription mutation
@@ -76,6 +121,11 @@ export function SubscriptionsPage() {
     cancelMutation.mutate({ id, immediately: immediately !== null ? immediately : false })
   }
 
+  const handleCreateSubscription = (e: React.FormEvent) => {
+    e.preventDefault()
+    createMutation.mutate(formData)
+  }
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'active':
@@ -94,27 +144,16 @@ export function SubscriptionsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Navigation */}
-      <Navigation />
-
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="max-w-7xl mx-auto">
-          {/* Header */}
-          <div className="flex justify-between items-center mb-8">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">Subscriptions</h1>
-              <p className="text-gray-600 mt-1">Manage customer subscriptions</p>
-            </div>
-            <Button onClick={() => setIsCreateModalOpen(true)}>Create Subscription</Button>
+    <div className="min-h-screen bg-gray-50 p-8">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="flex justify-between items-center mb-8">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Subscriptions</h1>
+            <p className="text-gray-600 mt-1">Manage customer subscriptions</p>
           </div>
-
-          {/* Create Subscription Modal */}
-          <CreateSubscriptionModal
-            isOpen={isCreateModalOpen}
-            onClose={() => setIsCreateModalOpen(false)}
-          />
+          <Button onClick={() => setShowCreateModal(true)}>Create Subscription</Button>
+        </div>
 
         {/* Filters */}
         <Card className="p-6 mb-6">
@@ -316,8 +355,128 @@ export function SubscriptionsPage() {
             )}
           </>
         )}
-        </div>
-      </main>
+
+        {/* Create Subscription Modal */}
+        {showCreateModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+              <div className="p-6">
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-2xl font-bold text-gray-900">Create Subscription</h2>
+                  <button
+                    onClick={() => setShowCreateModal(false)}
+                    className="text-gray-400 hover:text-gray-600"
+                  >
+                    ✕
+                  </button>
+                </div>
+
+                <form onSubmit={handleCreateSubscription} className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Customer *
+                    </label>
+                    <select
+                      required
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      value={formData.customer_id}
+                      onChange={(e) => setFormData({ ...formData, customer_id: e.target.value })}
+                    >
+                      <option value="">Select a customer</option>
+                      {customersData?.data?.map((customer: any) => (
+                        <option key={customer.id} value={customer.id}>
+                          {customer.name} ({customer.email})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Plan *
+                    </label>
+                    <select
+                      required
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      value={formData.plan_id}
+                      onChange={(e) => setFormData({ ...formData, plan_id: e.target.value })}
+                    >
+                      <option value="">Select a plan</option>
+                      {plansData?.data?.map((plan: any) => (
+                        <option key={plan.id} value={plan.id}>
+                          {plan.name} - ${plan.price}/{plan.billing_cycle}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Start Date *
+                      </label>
+                      <input
+                        type="date"
+                        required
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        value={formData.start_date}
+                        onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Status
+                      </label>
+                      <select
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        value={formData.status}
+                        onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                      >
+                        <option value="active">Active</option>
+                        <option value="trialing">Trialing</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="flex items-center">
+                      <input
+                        type="checkbox"
+                        className="mr-2"
+                        checked={formData.auto_renew}
+                        onChange={(e) =>
+                          setFormData({ ...formData, auto_renew: e.target.checked })
+                        }
+                      />
+                      <span className="text-sm font-medium text-gray-700">Auto-renew</span>
+                    </label>
+                  </div>
+
+                  {createMutation.isError && (
+                    <div className="bg-red-50 border border-red-200 rounded-md p-3">
+                      <p className="text-sm text-red-800">Failed to create subscription</p>
+                    </div>
+                  )}
+
+                  <div className="flex justify-end gap-3 pt-4">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => setShowCreateModal(false)}
+                    >
+                      Cancel
+                    </Button>
+                    <Button type="submit" disabled={createMutation.isPending}>
+                      {createMutation.isPending ? 'Creating...' : 'Create Subscription'}
+                    </Button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   )
 }

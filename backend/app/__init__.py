@@ -48,6 +48,10 @@ def create_app(config_name=None):
             seed_initial_data(app)
             app._db_seeded = True
     
+    # Initialize scheduler (after app context is available)
+    from app.services import SchedulerService
+    SchedulerService.initialize_scheduler(app)
+    
     return app
 
 def register_blueprints(app):

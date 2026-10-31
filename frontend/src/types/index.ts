@@ -115,17 +115,92 @@ export interface Invoice {
   customer_id: string
   subscription_id?: string
   invoice_number: string
-  status: 'draft' | 'sent' | 'viewed' | 'partially_paid' | 'paid' | 'overdue' | 'cancelled'
-  subtotal: number
-  tax_amount?: number
-  discount_amount?: number
+  status: 'draft' | 'open' | 'partially_paid' | 'paid' | 'overdue' | 'void'
+  subtotal_amount: number
+  tax_amount: number
   total_amount: number
-  amount_paid?: number
+  amount_paid: number
   amount_due: number
   invoice_date: string
   due_date: string
+  billing_period_start?: string
+  billing_period_end?: string
+  invoice_type?: 'recurring' | 'manual'
+  currency?: string
   created_at: string
   updated_at: string
+}
+
+export interface InvoiceLineItem {
+  id: string
+  invoice_id: string
+  description: string
+  quantity: number
+  unit_price: number
+  discount_amount: number
+  discount_type?: string
+  tax_rate: number
+  tax_amount: number
+  total_amount: number
+}
+
+export interface InvoiceWithDetails extends Invoice {
+  customer?: Customer
+  subscription?: Subscription
+  line_items?: InvoiceLineItem[]
+}
+
+export interface Payment {
+  id: string
+  payment_number: string
+  customer_id: string
+  invoice_id: string
+  amount: number
+  payment_date: string
+  payment_method: string
+  external_transaction_id?: string
+  status: 'pending' | 'completed' | 'failed' | 'reversed'
+  notes?: string
+  created_at: string
+  updated_at: string
+}
+
+export interface PaymentWithDetails extends Payment {
+  customer?: Customer
+  invoice?: Invoice
+}
+
+export interface BillingJob {
+  id: number
+  status: 'running' | 'completed' | 'failed'
+  started_at: string
+  completed_at?: string
+  subscriptions_processed: number
+  invoices_created: number
+  failures_count: number
+  error_log?: string
+}
+
+export interface FinanceSummary {
+  total_invoices: number
+  total_invoiced: number
+  total_paid: number
+  total_outstanding: number
+  total_overdue: number
+  by_status: {
+    [status: string]: {
+      count: number
+      amount_due: number
+    }
+  }
+}
+
+export interface OutstandingBalance {
+  customer_id: string
+  company_name: string
+  email: string
+  total_outstanding: number
+  invoice_count: number
 }
 
 export interface Quotation {
@@ -229,6 +304,34 @@ export interface UpdateSubscriptionPayload {
 
 export interface CancelSubscriptionPayload {
   cancel_immediately?: boolean
+}
+
+// Module 3: Billing payloads
+export interface CreateInvoicePayload {
+  customer_id: string
+  subscription_id?: string
+  invoice_date: string
+  due_date: string
+  billing_period_start?: string
+  billing_period_end?: string
+  invoice_type?: 'recurring' | 'manual'
+  currency?: string
+  line_items: {
+    description: string
+    quantity: number
+    unit_price: number
+    tax_rate: number
+    discount_amount?: number
+  }[]
+}
+
+export interface CreatePaymentPayload {
+  invoice_id: string
+  amount: number
+  payment_date: string
+  payment_method: string
+  external_transaction_id?: string
+  notes?: string
 }
 
 // Extended types with relations

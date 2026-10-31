@@ -5,6 +5,12 @@ import { LoginPage } from './pages/LoginPage'
 import { DashboardPage } from './pages/DashboardPage'
 import { ProductsPage } from './pages/ProductsPage'
 import { SubscriptionsPage } from './pages/SubscriptionsPage'
+import { InvoiceListPage } from './pages/InvoiceListPage'
+import { InvoiceDetailPage } from './pages/InvoiceDetailPage'
+import { RecordPaymentPage } from './pages/RecordPaymentPage'
+import { PaymentListPage } from './pages/PaymentListPage'
+import { BillingJobsPage } from './pages/BillingJobsPage'
+import { FinanceDashboardPage } from './pages/FinanceDashboardPage'
 import { NotFoundPage } from './pages/NotFoundPage'
 
 const queryClient = new QueryClient({
@@ -43,6 +49,54 @@ function App() {
             element={
               <ProtectedRoute>
                 <SubscriptionsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/invoices"
+            element={
+              <ProtectedRoute>
+                <InvoiceListPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/invoices/:id"
+            element={
+              <ProtectedRoute>
+                <InvoiceDetailPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/invoices/:id/record-payment"
+            element={
+              <ProtectedRoute>
+                <RecordPaymentPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/payments"
+            element={
+              <ProtectedRoute>
+                <PaymentListPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/billing/jobs"
+            element={
+              <ProtectedRoute>
+                <BillingJobsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/finance"
+            element={
+              <ProtectedRoute>
+                <FinanceDashboardPage />
               </ProtectedRoute>
             }
           />
