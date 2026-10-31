@@ -123,8 +123,13 @@ def register_jwt_handlers(app):
     @jwt.additional_claims_loader
     def add_claims_to_jwt(identity):
         from app.models import User
-        import uuid
-        user = User.query.filter_by(id=uuid.UUID(identity) if isinstance(identity, str) else identity).first()
+        # Convert string identity to integer (user IDs are integers, not UUIDs)
+        try:
+            user_id = int(identity) if isinstance(identity, str) else identity
+            user = User.query.filter_by(id=user_id).first()
+        except (ValueError, TypeError):
+            user = None
+            
         if user:
             return {
                 'role': user.role.name if user.role else None,
