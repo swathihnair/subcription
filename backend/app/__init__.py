@@ -20,14 +20,14 @@ def create_app(config_name=None):
     db.init_app(app)
     migrate.init_app(app, db)
     jwt.init_app(app)
-    cors.init_app(app, resources={
-        r"/api/*": {
-            "origins": app.config['CORS_ORIGINS'],
-            "supports_credentials": True,
-            "allow_headers": ["Content-Type", "Authorization"],
-            "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"]
-        }
-    })
+    
+    # Configure CORS more explicitly
+    CORS(app, 
+         resources={r"/api/*": {"origins": "*"}},
+         supports_credentials=True,
+         allow_headers=["Content-Type", "Authorization"],
+         methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"]
+    )
     
     # Configure logging
     setup_logging(app)
@@ -41,10 +41,12 @@ def create_app(config_name=None):
     # Register blueprints
     register_blueprints(app)
     
-    # Create tables and seed initial data
-    with app.app_context():
-        db.create_all()
-        seed_initial_data(app)
+    # Create tables and seed initial data (only once)
+    if not hasattr(app, '_db_seeded'):
+        with app.app_context():
+            db.create_all()
+            seed_initial_data(app)
+            app._db_seeded = True
     
     return app
 
@@ -121,7 +123,8 @@ def register_jwt_handlers(app):
     @jwt.additional_claims_loader
     def add_claims_to_jwt(identity):
         from app.models import User
-        user = User.query.get(identity)
+        import uuid
+        user = User.query.filter_by(id=uuid.UUID(identity) if isinstance(identity, str) else identity).first()
         if user:
             return {
                 'role': user.role.name if user.role else None,

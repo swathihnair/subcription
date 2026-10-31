@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useAuth } from '@/hooks/useAuth'
-import { Button } from '@/components/ui/Button'
-import { Input } from '@/components/ui/Input'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
+import { useAuth } from '../hooks/useAuth'
+import { Button } from '../components/ui/Button'
+import { Input } from '../components/ui/Input'
+import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card'
 
 export const LoginPage: React.FC = () => {
   const navigate = useNavigate()
@@ -53,7 +53,7 @@ export const LoginPage: React.FC = () => {
               <Input
                 type="email"
                 label="Email Address"
-                placeholder="admin@example.com"
+                placeholder="admin@local.dev"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -82,7 +82,7 @@ export const LoginPage: React.FC = () => {
               <div className="text-center text-sm text-gray-600">
                 <p>
                   Demo credentials:<br />
-                  Email: admin@example.com<br />
+                  Email: admin@local.dev<br />
                   Password: password123
                 </p>
               </div>

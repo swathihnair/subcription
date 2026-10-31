@@ -3,8 +3,8 @@
  */
 import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { authService } from '@/services/auth'
-import { User, LoginCredentials } from '@/types'
+import { authService } from '../services/auth'
+import { User, LoginCredentials } from '../types'
 
 export const useAuth = () => {
   const [user, setUser] = useState<User | null>(null)

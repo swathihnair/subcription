@@ -30,7 +30,7 @@ class DevelopmentConfig(Config):
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = os.getenv(
         'DATABASE_URL',
-        'postgresql://subscriptiq_user:dev_password@localhost:5432/subscriptiq_db'
+        'sqlite:///subscriptiq.db'
     )
 
 class TestingConfig(Config):

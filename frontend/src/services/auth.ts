@@ -2,7 +2,7 @@
  * Authentication service
  */
 import { apiClient } from './api'
-import { AuthResponse, LoginCredentials, User } from '@/types'
+import { AuthResponse, LoginCredentials, User } from '../types'
 
 export const authService = {
   login: async (credentials: LoginCredentials): Promise<AuthResponse> => {
