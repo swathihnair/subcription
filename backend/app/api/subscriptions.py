@@ -6,7 +6,6 @@ from app.extensions import db
 from app.models import Subscription, Customer, Plan, User
 from datetime import datetime, timedelta
 from decimal import Decimal
-import uuid
 import random
 
 def generate_subscription_number():
@@ -76,8 +75,10 @@ def get_subscriptions():
     
     if customer_id:
         try:
-            customer_uuid = uuid.UUID(customer_id)
-            query = query.filter(Subscription.customer_id == customer_uuid)
+            customer_id_int = int(customer_id)
+            query = query.filter(Subscription.customer_id == customer_id_int)
+        except (ValueError, TypeError):
+            pass
         except ValueError:
             return jsonify({
                 'success': False,
@@ -210,8 +211,8 @@ def create_subscription():
     
     # Validate customer exists
     try:
-        customer_uuid = uuid.UUID(data['customer_id'])
-    except ValueError:
+        customer_id = int(data['customer_id'])
+    except (ValueError, TypeError):
         return jsonify({
             'success': False,
             'error': {
@@ -220,7 +221,7 @@ def create_subscription():
             }
         }), 400
     
-    customer = Customer.query.get(customer_uuid)
+    customer = Customer.query.get(customer_id)
     if not customer:
         return jsonify({
             'success': False,
@@ -232,8 +233,8 @@ def create_subscription():
     
     # Validate plan exists
     try:
-        plan_uuid = uuid.UUID(data['plan_id'])
-    except ValueError:
+        plan_id = int(data['plan_id'])
+    except (ValueError, TypeError):
         return jsonify({
             'success': False,
             'error': {
@@ -242,7 +243,7 @@ def create_subscription():
             }
         }), 400
     
-    plan = Plan.query.get(plan_uuid)
+    plan = Plan.query.get(plan_id)
     if not plan:
         return jsonify({
             'success': False,
@@ -263,8 +264,8 @@ def create_subscription():
     
     # Check for duplicate active subscriptions
     existing = Subscription.query.filter_by(
-        customer_id=customer_uuid,
-        plan_id=plan_uuid
+        customer_id=customer_id,
+        plan_id=plan_id
     ).filter(
         Subscription.status.in_(['active', 'trialing'])
     ).first()
@@ -303,8 +304,8 @@ def create_subscription():
         acv = mrr * 12
         
         subscription = Subscription(
-            customer_id=customer_uuid,
-            plan_id=plan_uuid,
+            customer_id=customer_id,
+            plan_id=plan_id,
             subscription_number=subscription_number,
             status=data.get('status', 'active'),
             start_date=start_date,
