@@ -16,3 +16,6 @@ def health_check():
 
 # Import routes to register them with the blueprint
 from app.api import customers, products, plans, quotations, subscriptions
+
+# Module 4: Customer Portal, Analytics, Notifications, Renewals, Audit
+from app.api import portal, notifications, renewals, analytics, audit

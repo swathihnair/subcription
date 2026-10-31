@@ -6,6 +6,10 @@ import { DashboardPage } from '@/pages/DashboardPage'
 import { ProductsPage } from '@/pages/ProductsPage'
 import { SubscriptionsPage } from '@/pages/SubscriptionsPage'
 import { NotFoundPage } from '@/pages/NotFoundPage'
+import CustomerPortalPage from '@/pages/CustomerPortalPage'
+import AnalyticsDashboardPage from '@/pages/AnalyticsDashboardPage'
+import NotificationsPage from '@/pages/NotificationsPage'
+import RenewalsPage from '@/pages/RenewalsPage'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -43,6 +47,38 @@ function App() {
             element={
               <ProtectedRoute>
                 <SubscriptionsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/portal"
+            element={
+              <ProtectedRoute>
+                <CustomerPortalPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/analytics"
+            element={
+              <ProtectedRoute>
+                <AnalyticsDashboardPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/notifications"
+            element={
+              <ProtectedRoute>
+                <NotificationsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/renewals"
+            element={
+              <ProtectedRoute>
+                <RenewalsPage />
               </ProtectedRoute>
             }
           />
