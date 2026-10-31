@@ -214,7 +214,7 @@ def create_product():
 def update_product(product_id):
     """Update a product"""
     user_id = get_jwt_identity()
-    user = User.query.get(user_id)
+    user = User.query.filter_by(id=uuid.UUID(user_id) if isinstance(user_id, str) else user_id).first()
     
     # Check permission
     if not user.has_permission('manage_products') and not user.has_permission('all'):
@@ -319,7 +319,7 @@ def update_product(product_id):
 def deactivate_product(product_id):
     """Deactivate a product - cannot delete if referenced by subscriptions"""
     user_id = get_jwt_identity()
-    user = User.query.get(user_id)
+    user = User.query.filter_by(id=uuid.UUID(user_id) if isinstance(user_id, str) else user_id).first()
     
     # Check permission
     if not user.has_permission('manage_products') and not user.has_permission('all'):

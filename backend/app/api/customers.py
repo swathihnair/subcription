@@ -12,7 +12,7 @@ import uuid
 def get_customers():
     """Get list of customers with filtering and pagination"""
     user_id = get_jwt_identity()
-    user = User.query.get(user_id)
+    user = User.query.filter_by(id=uuid.UUID(user_id) if isinstance(user_id, str) else user_id).first()
     
     # Check permission
     if not user.has_permission('manage_customers') and not user.has_permission('all'):
@@ -75,7 +75,7 @@ def get_customers():
 def get_customer(customer_id):
     """Get single customer by ID"""
     user_id = get_jwt_identity()
-    user = User.query.get(user_id)
+    user = User.query.filter_by(id=uuid.UUID(user_id) if isinstance(user_id, str) else user_id).first()
     
     # Check permission
     if not user.has_permission('manage_customers') and not user.has_permission('all'):
@@ -121,7 +121,7 @@ def get_customer(customer_id):
 def create_customer():
     """Create a new customer"""
     user_id = get_jwt_identity()
-    user = User.query.get(user_id)
+    user = User.query.filter_by(id=uuid.UUID(user_id) if isinstance(user_id, str) else user_id).first()
     
     # Check permission
     if not user.has_permission('manage_customers') and not user.has_permission('all'):
@@ -189,7 +189,7 @@ def create_customer():
 def update_customer(customer_id):
     """Update a customer"""
     user_id = get_jwt_identity()
-    user = User.query.get(user_id)
+    user = User.query.filter_by(id=uuid.UUID(user_id) if isinstance(user_id, str) else user_id).first()
     
     # Check permission
     if not user.has_permission('manage_customers') and not user.has_permission('all'):
@@ -275,7 +275,7 @@ def update_customer(customer_id):
 def deactivate_customer(customer_id):
     """Deactivate a customer"""
     user_id = get_jwt_identity()
-    user = User.query.get(user_id)
+    user = User.query.filter_by(id=uuid.UUID(user_id) if isinstance(user_id, str) else user_id).first()
     
     # Check permission
     if not user.has_permission('manage_customers') and not user.has_permission('all'):

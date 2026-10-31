@@ -15,7 +15,7 @@ VALID_BILLING_CYCLES = ['weekly', 'monthly', 'quarterly', 'annually']
 def get_plans():
     """Get list of plans with filtering and pagination"""
     user_id = get_jwt_identity()
-    user = User.query.get(user_id)
+    user = User.query.filter_by(id=uuid.UUID(user_id) if isinstance(user_id, str) else user_id).first()
     
     # Check permission
     if not user.has_permission('manage_products') and not user.has_permission('all'):
@@ -90,7 +90,7 @@ def get_plans():
 def get_plan(plan_id):
     """Get single plan by ID"""
     user_id = get_jwt_identity()
-    user = User.query.get(user_id)
+    user = User.query.filter_by(id=uuid.UUID(user_id) if isinstance(user_id, str) else user_id).first()
     
     # Check permission
     if not user.has_permission('manage_products') and not user.has_permission('all'):
@@ -138,7 +138,7 @@ def get_plan(plan_id):
 def create_plan():
     """Create a new plan"""
     user_id = get_jwt_identity()
-    user = User.query.get(user_id)
+    user = User.query.filter_by(id=uuid.UUID(user_id) if isinstance(user_id, str) else user_id).first()
     
     # Check permission
     if not user.has_permission('manage_products') and not user.has_permission('all'):
@@ -274,7 +274,7 @@ def create_plan():
 def update_plan(plan_id):
     """Update a plan"""
     user_id = get_jwt_identity()
-    user = User.query.get(user_id)
+    user = User.query.filter_by(id=uuid.UUID(user_id) if isinstance(user_id, str) else user_id).first()
     
     # Check permission
     if not user.has_permission('manage_products') and not user.has_permission('all'):
@@ -401,7 +401,7 @@ def update_plan(plan_id):
 def deactivate_plan(plan_id):
     """Deactivate a plan - cannot delete if referenced by subscriptions"""
     user_id = get_jwt_identity()
-    user = User.query.get(user_id)
+    user = User.query.filter_by(id=uuid.UUID(user_id) if isinstance(user_id, str) else user_id).first()
     
     # Check permission
     if not user.has_permission('manage_products') and not user.has_permission('all'):

@@ -21,7 +21,7 @@ def generate_quote_number():
 def get_quotations():
     """Get list of quotations with filtering and pagination"""
     user_id = get_jwt_identity()
-    user = User.query.get(user_id)
+    user = User.query.filter_by(id=uuid.UUID(user_id) if isinstance(user_id, str) else user_id).first()
     
     # Check permission
     if not user.has_permission('manage_quotations') and not user.has_permission('all'):
@@ -98,7 +98,7 @@ def get_quotations():
 def get_quotation(quotation_id):
     """Get single quotation by ID"""
     user_id = get_jwt_identity()
-    user = User.query.get(user_id)
+    user = User.query.filter_by(id=uuid.UUID(user_id) if isinstance(user_id, str) else user_id).first()
     
     # Check permission
     if not user.has_permission('manage_quotations') and not user.has_permission('all'):
@@ -148,7 +148,7 @@ def get_quotation(quotation_id):
 def create_quotation():
     """Create a new quotation"""
     user_id = get_jwt_identity()
-    user = User.query.get(user_id)
+    user = User.query.filter_by(id=uuid.UUID(user_id) if isinstance(user_id, str) else user_id).first()
     
     # Check permission
     if not user.has_permission('manage_quotations') and not user.has_permission('all'):
@@ -299,7 +299,7 @@ def create_quotation():
 def update_quotation(quotation_id):
     """Update a quotation (only in draft or sent status)"""
     user_id = get_jwt_identity()
-    user = User.query.get(user_id)
+    user = User.query.filter_by(id=uuid.UUID(user_id) if isinstance(user_id, str) else user_id).first()
     
     # Check permission
     if not user.has_permission('manage_quotations') and not user.has_permission('all'):
@@ -404,7 +404,7 @@ def update_quotation(quotation_id):
 def accept_quotation(quotation_id):
     """Accept a quotation"""
     user_id = get_jwt_identity()
-    user = User.query.get(user_id)
+    user = User.query.filter_by(id=uuid.UUID(user_id) if isinstance(user_id, str) else user_id).first()
     
     # Check permission
     if not user.has_permission('manage_quotations') and not user.has_permission('all'):
@@ -495,7 +495,7 @@ def accept_quotation(quotation_id):
 def reject_quotation(quotation_id):
     """Reject a quotation"""
     user_id = get_jwt_identity()
-    user = User.query.get(user_id)
+    user = User.query.filter_by(id=uuid.UUID(user_id) if isinstance(user_id, str) else user_id).first()
     
     # Check permission
     if not user.has_permission('manage_quotations') and not user.has_permission('all'):
@@ -565,7 +565,7 @@ def reject_quotation(quotation_id):
 def convert_quotation_to_subscription(quotation_id):
     """Convert accepted quotation to subscription"""
     user_id = get_jwt_identity()
-    user = User.query.get(user_id)
+    user = User.query.filter_by(id=uuid.UUID(user_id) if isinstance(user_id, str) else user_id).first()
     
     # Check permission
     if not user.has_permission('manage_quotations') and not user.has_permission('all'):

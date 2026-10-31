@@ -41,7 +41,7 @@ VALID_SUBSCRIPTION_STATUSES = ['draft', 'trialing', 'active', 'paused', 'past_du
 def get_subscriptions():
     """Get list of subscriptions with filtering and pagination"""
     user_id = get_jwt_identity()
-    user = User.query.get(user_id)
+    user = User.query.filter_by(id=uuid.UUID(user_id) if isinstance(user_id, str) else user_id).first()
     
     # Check permission
     if not user.has_permission('manage_subscriptions') and not user.has_permission('all'):
@@ -124,7 +124,7 @@ def get_subscriptions():
 def get_subscription(subscription_id):
     """Get single subscription by ID"""
     user_id = get_jwt_identity()
-    user = User.query.get(user_id)
+    user = User.query.filter_by(id=uuid.UUID(user_id) if isinstance(user_id, str) else user_id).first()
     
     try:
         subscription_uuid = uuid.UUID(subscription_id)
@@ -180,7 +180,7 @@ def get_subscription(subscription_id):
 def create_subscription():
     """Create a new subscription"""
     user_id = get_jwt_identity()
-    user = User.query.get(user_id)
+    user = User.query.filter_by(id=uuid.UUID(user_id) if isinstance(user_id, str) else user_id).first()
     
     # Check permission
     if not user.has_permission('manage_subscriptions') and not user.has_permission('all'):
@@ -338,7 +338,7 @@ def create_subscription():
 def update_subscription(subscription_id):
     """Update a subscription"""
     user_id = get_jwt_identity()
-    user = User.query.get(user_id)
+    user = User.query.filter_by(id=uuid.UUID(user_id) if isinstance(user_id, str) else user_id).first()
     
     # Check permission
     if not user.has_permission('manage_subscriptions') and not user.has_permission('all'):
@@ -408,7 +408,7 @@ def update_subscription(subscription_id):
 def pause_subscription(subscription_id):
     """Pause an active subscription"""
     user_id = get_jwt_identity()
-    user = User.query.get(user_id)
+    user = User.query.filter_by(id=uuid.UUID(user_id) if isinstance(user_id, str) else user_id).first()
     
     # Check permission
     if not user.has_permission('manage_subscriptions') and not user.has_permission('all'):
@@ -478,7 +478,7 @@ def pause_subscription(subscription_id):
 def resume_subscription(subscription_id):
     """Resume a paused subscription"""
     user_id = get_jwt_identity()
-    user = User.query.get(user_id)
+    user = User.query.filter_by(id=uuid.UUID(user_id) if isinstance(user_id, str) else user_id).first()
     
     # Check permission
     if not user.has_permission('manage_subscriptions') and not user.has_permission('all'):
@@ -548,7 +548,7 @@ def resume_subscription(subscription_id):
 def cancel_subscription(subscription_id):
     """Cancel a subscription"""
     user_id = get_jwt_identity()
-    user = User.query.get(user_id)
+    user = User.query.filter_by(id=uuid.UUID(user_id) if isinstance(user_id, str) else user_id).first()
     
     # Check permission
     if not user.has_permission('manage_subscriptions') and not user.has_permission('all'):
