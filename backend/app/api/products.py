@@ -6,7 +6,6 @@ from app.extensions import db
 from app.models import Product, User, Subscription
 from datetime import datetime
 from decimal import Decimal
-import uuid
 
 @api_bp.route('/products', methods=['GET'])
 @jwt_required()
@@ -72,7 +71,7 @@ def get_products():
         }
     }), 200
 
-@api_bp.route('/products/<product_id>', methods=['GET'])
+@api_bp.route('/products/<int:product_id>', methods=['GET'])
 @jwt_required()
 def get_product(product_id):
     """Get single product by ID with associated plans"""
@@ -89,18 +88,7 @@ def get_product(product_id):
             }
         }), 403
     
-    try:
-        product_uuid = uuid.UUID(product_id)
-    except ValueError:
-        return jsonify({
-            'success': False,
-            'error': {
-                'code': 'INVALID_ID',
-                'message': 'Invalid product ID format'
-            }
-        }), 400
-    
-    product = Product.query.get(product_uuid)
+    product = Product.query.get(product_id)
     
     if not product:
         return jsonify({
@@ -209,7 +197,7 @@ def create_product():
             }
         }), 500
 
-@api_bp.route('/products/<product_id>', methods=['PUT', 'PATCH'])
+@api_bp.route('/products/<int:product_id>', methods=['PUT', 'PATCH'])
 @jwt_required()
 def update_product(product_id):
     """Update a product"""
@@ -226,18 +214,7 @@ def update_product(product_id):
             }
         }), 403
     
-    try:
-        product_uuid = uuid.UUID(product_id)
-    except ValueError:
-        return jsonify({
-            'success': False,
-            'error': {
-                'code': 'INVALID_ID',
-                'message': 'Invalid product ID format'
-            }
-        }), 400
-    
-    product = Product.query.get(product_uuid)
+    product = Product.query.get(product_id)
     
     if not product:
         return jsonify({
@@ -314,7 +291,7 @@ def update_product(product_id):
             }
         }), 500
 
-@api_bp.route('/products/<product_id>/deactivate', methods=['POST'])
+@api_bp.route('/products/<int:product_id>/deactivate', methods=['POST'])
 @jwt_required()
 def deactivate_product(product_id):
     """Deactivate a product - cannot delete if referenced by subscriptions"""
@@ -331,18 +308,7 @@ def deactivate_product(product_id):
             }
         }), 403
     
-    try:
-        product_uuid = uuid.UUID(product_id)
-    except ValueError:
-        return jsonify({
-            'success': False,
-            'error': {
-                'code': 'INVALID_ID',
-                'message': 'Invalid product ID format'
-            }
-        }), 400
-    
-    product = Product.query.get(product_uuid)
+    product = Product.query.get(product_id)
     
     if not product:
         return jsonify({

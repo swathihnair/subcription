@@ -7,11 +7,13 @@ import { productService } from '@/services/module2'
 import { Product } from '@/types'
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
+import { CreateProductModal } from '@/components/CreateProductModal'
 
 export function ProductsPage() {
   const [page, setPage] = useState(1)
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState<string>('')
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const queryClient = useQueryClient()
 
   // Fetch products with filters
@@ -49,8 +51,14 @@ export function ProductsPage() {
             <h1 className="text-3xl font-bold text-gray-900">Products</h1>
             <p className="text-gray-600 mt-1">Manage your product catalog</p>
           </div>
-          <Button>Create Product</Button>
+          <Button onClick={() => setIsCreateModalOpen(true)}>Create Product</Button>
         </div>
+
+        {/* Create Product Modal */}
+        <CreateProductModal
+          isOpen={isCreateModalOpen}
+          onClose={() => setIsCreateModalOpen(false)}
+        />
 
         {/* Filters */}
         <Card className="p-6 mb-6">
