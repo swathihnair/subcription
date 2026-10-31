@@ -6,12 +6,31 @@ class Invoice(db.Model):
     """Invoice model - Module 3 owner"""
     __tablename__ = 'invoices'
     
+    __table_args__ = (
+        db.UniqueConstraint(
+            'subscription_id', 
+            'billing_period_start', 
+            'billing_period_end',
+            'invoice_type',
+            name='uq_subscription_billing_period'
+        ),
+        db.Index('idx_invoice_status', 'status'),
+        db.Index('idx_invoice_due_date', 'due_date'),
+        db.Index('idx_invoice_billing_period', 'billing_period_start', 'billing_period_end'),
+    )
+    
     id = db.Column(db.Integer, primary_key=True)
     customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'), nullable=False)
     subscription_id = db.Column(db.Integer, db.ForeignKey('subscriptions.id'), nullable=True)
     
     invoice_number = db.Column(db.String(100), unique=True, nullable=False, index=True)
-    status = db.Column(db.String(50), default='draft', nullable=False)  # draft, sent, viewed, partially_paid, paid, overdue, cancelled
+    status = db.Column(db.String(50), default='draft', nullable=False)  # draft, open, partially_paid, paid, overdue, void
+    
+    # Billing period tracking for duplicate prevention
+    billing_period_start = db.Column(db.DateTime(timezone=True), nullable=True)
+    billing_period_end = db.Column(db.DateTime(timezone=True), nullable=True)
+    invoice_type = db.Column(db.String(50), default='one_time', nullable=False)  # 'recurring', 'one_time'
+    currency = db.Column(db.String(3), default='USD', nullable=False)
     
     # Financial
     subtotal = db.Column(db.Numeric(15, 2), nullable=False)
@@ -48,6 +67,10 @@ class Invoice(db.Model):
             'subscription_id': str(self.subscription_id) if self.subscription_id else None,
             'invoice_number': self.invoice_number,
             'status': self.status,
+            'billing_period_start': self.billing_period_start.isoformat() if self.billing_period_start else None,
+            'billing_period_end': self.billing_period_end.isoformat() if self.billing_period_end else None,
+            'invoice_type': self.invoice_type,
+            'currency': self.currency,
             'subtotal': float(self.subtotal),
             'tax_amount': float(self.tax_amount) if self.tax_amount else 0,
             'discount_amount': float(self.discount_amount) if self.discount_amount else 0,
@@ -74,6 +97,10 @@ class InvoiceLineItem(db.Model):
     unit_price = db.Column(db.Numeric(15, 2), nullable=False)
     tax_rate = db.Column(db.Numeric(5, 2), default=0)  # percentage
     
+    # Discount fields
+    discount_amount = db.Column(db.Numeric(15, 2), default=0)
+    discount_type = db.Column(db.String(20))  # 'percentage', 'fixed'
+    
     # Calculated fields
     line_total = db.Column(db.Numeric(15, 2), nullable=False)
     tax_total = db.Column(db.Numeric(15, 2), default=0)
@@ -93,6 +120,8 @@ class InvoiceLineItem(db.Model):
             'quantity': float(self.quantity),
             'unit_price': float(self.unit_price),
             'tax_rate': float(self.tax_rate) if self.tax_rate else 0,
+            'discount_amount': float(self.discount_amount) if self.discount_amount else 0,
+            'discount_type': self.discount_type,
             'line_total': float(self.line_total),
             'tax_total': float(self.tax_total) if self.tax_total else 0,
             'created_at': self.created_at.isoformat(),
@@ -102,6 +131,10 @@ class InvoiceLineItem(db.Model):
 class Payment(db.Model):
     """Payment model - Module 3 owner"""
     __tablename__ = 'payments'
+    
+    __table_args__ = (
+        db.Index('idx_payment_external_tx', 'external_transaction_id'),
+    )
     
     id = db.Column(db.Integer, primary_key=True)
     invoice_id = db.Column(db.Integer, db.ForeignKey('invoices.id'), nullable=False)
@@ -144,6 +177,43 @@ class Payment(db.Model):
             'payment_date': self.payment_date.isoformat(),
             'processed_at': self.processed_at.isoformat() if self.processed_at else None,
             'notes': self.notes,
+            'created_at': self.created_at.isoformat(),
+            'updated_at': self.updated_at.isoformat(),
+        }
+
+
+class BillingJob(db.Model):
+    """Billing job execution record - Module 3 owner"""
+    __tablename__ = 'billing_jobs'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    status = db.Column(db.String(50), nullable=False)  # running, completed, failed
+    
+    started_at = db.Column(db.DateTime(timezone=True), nullable=False)
+    completed_at = db.Column(db.DateTime(timezone=True))
+    
+    subscriptions_processed = db.Column(db.Integer, default=0)
+    invoices_created = db.Column(db.Integer, default=0)
+    failures_count = db.Column(db.Integer, default=0)
+    
+    error_log = db.Column(db.Text)  # JSON array of errors
+    
+    created_at = db.Column(db.DateTime(timezone=True), default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime(timezone=True), default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    def __repr__(self):
+        return f'<BillingJob {self.id} {self.status}>'
+    
+    def to_dict(self):
+        return {
+            'id': str(self.id),
+            'status': self.status,
+            'started_at': self.started_at.isoformat(),
+            'completed_at': self.completed_at.isoformat() if self.completed_at else None,
+            'subscriptions_processed': self.subscriptions_processed,
+            'invoices_created': self.invoices_created,
+            'failures_count': self.failures_count,
+            'error_log': self.error_log,
             'created_at': self.created_at.isoformat(),
             'updated_at': self.updated_at.isoformat(),
         }

@@ -6,9 +6,9 @@ A comprehensive subscription management platform developed by Brightloop Softwar
 
 SubscriptIQ consists of four independent modules integrated on a shared core platform:
 
-- **Module 1 (Core Platform)**: Authentication, shared models, API contracts, frontend foundation
-- **Module 2 (Sales & Subscriptions)**: Customer, Product, Plan, Quotation, Subscription management
-- **Module 3 (Billing & Payments)**: Invoice, Payment, Billing cycle management
+- **Module 1 (Core Platform)**: ✅ Authentication, shared models, API contracts, frontend foundation
+- **Module 2 (Sales & Subscriptions)**: ✅ Customer, Product, Plan, Quotation, Subscription management
+- **Module 3 (Billing & Finance)**: ✅ Invoice, Payment, Billing engine, PDF generation, Financial reporting
 - **Module 4 (Analytics & Notifications)**: Customer portal, Analytics, Notifications, Audit logs
 
 ## Technology Stack
@@ -23,11 +23,14 @@ SubscriptIQ consists of four independent modules integrated on a shared core pla
 - Recharts for analytics
 
 **Backend:**
-- Python 3.10+
+- Python 3.10+ (compatible with 3.7+)
 - Flask framework
 - Flask-SQLAlchemy ORM
 - Flask-JWT-Extended for authentication
+- Flask-Migrate for database migrations
 - PostgreSQL database
+- ReportLab for PDF generation (Module 3)
+- APScheduler for job scheduling (Module 3)
 - pytest for testing
 
 ## Prerequisites
@@ -173,6 +176,41 @@ Key variables:
 - `DATABASE_URL`: PostgreSQL connection string
 - `JWT_SECRET_KEY`: Secret key for JWT tokens
 - `FRONTEND_URL`: Frontend origin for CORS
+- `ENABLE_SCHEDULER`: Enable scheduled billing (Module 3, set true on ONE instance only)
+- `BILLING_CRON`: Billing schedule (Module 3, default: daily at midnight)
+
+## Module 3: Billing & Finance
+
+### Features
+- 🔄 **Automated Recurring Billing** - Daily scheduled billing runs
+- 📄 **Invoice Management** - Create, issue, void invoices with line items
+- 💳 **Payment Tracking** - Record payments, handle partial/full payments
+- 📊 **Financial Reporting** - Summary, outstanding balances, status breakdowns
+- 🖨️ **PDF Generation** - Professional invoice PDFs with company branding
+- ⚙️ **Scheduled Jobs** - Automatic billing and overdue checks
+
+### Quick Start (Module 3)
+
+```bash
+# Configure scheduler (only ONE instance in production)
+ENABLE_SCHEDULER=true
+BILLING_CRON=0 0 * * *  # Daily at midnight
+
+# Manual billing run
+curl -X POST http://localhost:5000/api/v1/billing/run \
+  -H "Authorization: Bearer <token>"
+
+# View financial summary
+curl http://localhost:5000/api/v1/finance/summary \
+  -H "Authorization: Bearer <token>"
+```
+
+### Documentation (Module 3)
+- `docs/module-3-api-endpoints.md` - Complete API reference
+- `docs/module-3-scheduler-setup.md` - Scheduler configuration
+- `docs/module-3-deployment-checklist.md` - Deployment guide
+- `docs/module-3-integration.md` - Module 2/4 integration
+- `docs/MODULE-3-SUMMARY.md` - Implementation summary
 
 ## API Documentation
 

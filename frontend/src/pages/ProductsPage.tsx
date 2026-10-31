@@ -3,17 +3,25 @@
  */
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { productService } from '../services/module2'
-import { Product } from '../types'
-import { Button } from '../components/ui/Button'
-import { Card } from '../components/ui/Card'
-import { CreateProductModal } from '../components/CreateProductModal'
+import { productService } from '@/services/module2'
+import { Product } from '@/types'
+import { Button } from '@/components/ui/Button'
+import { Card } from '@/components/ui/Card'
 
 export function ProductsPage() {
   const [page, setPage] = useState(1)
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState<string>('')
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
+  const [showCreateModal, setShowCreateModal] = useState(false)
+  const [formData, setFormData] = useState({
+    name: '',
+    sku: '',
+    description: '',
+    base_price: '',
+    status: 'active',
+    is_taxable: true,
+    tax_rate: '0',
+  })
   const queryClient = useQueryClient()
 
   // Fetch products with filters
@@ -26,6 +34,24 @@ export function ProductsPage() {
         search: search || undefined,
         status: statusFilter || undefined,
       }),
+  })
+
+  // Create product mutation
+  const createMutation = useMutation({
+    mutationFn: (data: any) => productService.createProduct(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['products'] })
+      setShowCreateModal(false)
+      setFormData({
+        name: '',
+        sku: '',
+        description: '',
+        base_price: '',
+        status: 'active',
+        is_taxable: true,
+        tax_rate: '0',
+      })
+    },
   })
 
   // Deactivate product mutation
@@ -42,6 +68,15 @@ export function ProductsPage() {
     }
   }
 
+  const handleCreateProduct = (e: React.FormEvent) => {
+    e.preventDefault()
+    createMutation.mutate({
+      ...formData,
+      base_price: parseFloat(formData.base_price),
+      tax_rate: parseFloat(formData.tax_rate),
+    })
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-7xl mx-auto">
@@ -51,14 +86,8 @@ export function ProductsPage() {
             <h1 className="text-3xl font-bold text-gray-900">Products</h1>
             <p className="text-gray-600 mt-1">Manage your product catalog</p>
           </div>
-          <Button onClick={() => setIsCreateModalOpen(true)}>Create Product</Button>
+          <Button onClick={() => setShowCreateModal(true)}>Create Product</Button>
         </div>
-
-        {/* Create Product Modal */}
-        <CreateProductModal
-          isOpen={isCreateModalOpen}
-          onClose={() => setIsCreateModalOpen(false)}
-        />
 
         {/* Filters */}
         <Card className="p-6 mb-6">
@@ -238,6 +267,145 @@ export function ProductsPage() {
               </div>
             )}
           </>
+        )}
+
+        {/* Create Product Modal */}
+        {showCreateModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+              <div className="p-6">
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-2xl font-bold text-gray-900">Create Product</h2>
+                  <button
+                    onClick={() => setShowCreateModal(false)}
+                    className="text-gray-400 hover:text-gray-600"
+                  >
+                    ✕
+                  </button>
+                </div>
+
+                <form onSubmit={handleCreateProduct} className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Product Name *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      SKU *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      value={formData.sku}
+                      onChange={(e) => setFormData({ ...formData, sku: e.target.value })}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Description
+                    </label>
+                    <textarea
+                      rows={3}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      value={formData.description}
+                      onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Base Price * ($)
+                      </label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        required
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        value={formData.base_price}
+                        onChange={(e) => setFormData({ ...formData, base_price: e.target.value })}
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Status
+                      </label>
+                      <select
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        value={formData.status}
+                        onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                      >
+                        <option value="active">Active</option>
+                        <option value="draft">Draft</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="flex items-center">
+                        <input
+                          type="checkbox"
+                          className="mr-2"
+                          checked={formData.is_taxable}
+                          onChange={(e) =>
+                            setFormData({ ...formData, is_taxable: e.target.checked })
+                          }
+                        />
+                        <span className="text-sm font-medium text-gray-700">Taxable</span>
+                      </label>
+                    </div>
+
+                    {formData.is_taxable && (
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Tax Rate (%)
+                        </label>
+                        <input
+                          type="number"
+                          step="0.01"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          value={formData.tax_rate}
+                          onChange={(e) => setFormData({ ...formData, tax_rate: e.target.value })}
+                        />
+                      </div>
+                    )}
+                  </div>
+
+                  {createMutation.isError && (
+                    <div className="bg-red-50 border border-red-200 rounded-md p-3">
+                      <p className="text-sm text-red-800">Failed to create product</p>
+                    </div>
+                  )}
+
+                  <div className="flex justify-end gap-3 pt-4">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => setShowCreateModal(false)}
+                    >
+                      Cancel
+                    </Button>
+                    <Button type="submit" disabled={createMutation.isPending}>
+                      {createMutation.isPending ? 'Creating...' : 'Create Product'}
+                    </Button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
         )}
       </div>
     </div>
