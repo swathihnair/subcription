@@ -9,71 +9,51 @@ export const Navigation: React.FC = () => {
   const isActive = (path: string) => location.pathname === path
 
   const navItems = [
-    { path: '/dashboard', label: 'Dashboard', icon: '📊' },
-    { path: '/products', label: 'Products', icon: '📦' },
-    { path: '/subscriptions', label: 'Subscriptions', icon: '📋' },
+    { path: '/dashboard', label: 'Dashboard' },
+    { path: '/products', label: 'Products' },
+    { path: '/subscriptions', label: 'Subscriptions' },
   ]
 
   return (
-    <nav className="bg-white shadow">
+    <header className="bg-white shadow-sm border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
-          {/* Logo and brand */}
-          <div className="flex items-center">
-            <Link to="/dashboard" className="flex-shrink-0">
-              <h1 className="text-xl font-bold text-gray-900">SubscriptIQ</h1>
-            </Link>
-          </div>
+        <div className="flex justify-between items-center py-4">
+          {/* Logo */}
+          <Link to="/dashboard" className="flex-shrink-0">
+            <h1 className="text-2xl font-bold text-gray-900">SubscriptIQ</h1>
+          </Link>
 
-          {/* Navigation links */}
-          <div className="hidden sm:flex sm:items-center sm:space-x-1">
+          {/* Navigation Links */}
+          <nav className="hidden md:flex gap-6">
             {navItems.map((item) => (
               <Link
                 key={item.path}
                 to={item.path}
-                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                className={`text-sm font-medium transition-colors ${
                   isActive(item.path)
-                    ? 'bg-primary-100 text-primary-700'
-                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                    ? 'text-blue-600 border-b-2 border-blue-600 pb-1'
+                    : 'text-gray-600 hover:text-gray-900'
                 }`}
               >
-                <span className="mr-1">{item.icon}</span>
                 {item.label}
               </Link>
             ))}
-          </div>
+          </nav>
 
-          {/* User menu */}
-          <div className="flex items-center space-x-4">
-            <div className="text-right">
-              <p className="text-sm font-medium text-gray-900">
+          {/* User Menu */}
+          <div className="flex items-center gap-4">
+            <div className="text-right hidden sm:block">
+              <p className="text-sm font-semibold text-gray-900">
                 {user?.first_name || user?.email}
               </p>
-              <p className="text-xs text-gray-600 capitalize">{user?.role?.name}</p>
+              <p className="text-xs text-gray-500 capitalize">{user?.role?.name}</p>
             </div>
             <Button variant="outline" size="sm" onClick={logout}>
               Sign Out
             </Button>
           </div>
         </div>
-
-        {/* Mobile navigation */}
-        <div className="sm:hidden flex justify-between py-2">
-          {navItems.map((item) => (
-            <Link
-              key={item.path}
-              to={item.path}
-              className={`px-2 py-1 text-xs font-medium rounded ${
-                isActive(item.path)
-                  ? 'bg-primary-100 text-primary-700'
-                  : 'text-gray-600'
-              }`}
-            >
-              {item.icon} {item.label}
-            </Link>
-          ))}
-        </div>
       </div>
-    </nav>
+    </header>
   )
 }
