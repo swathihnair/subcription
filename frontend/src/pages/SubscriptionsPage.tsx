@@ -7,10 +7,13 @@ import { subscriptionService } from '../services/module2'
 import { SubscriptionWithDetails } from '../types'
 import { Button } from '../components/ui/Button'
 import { Card } from '../components/ui/Card'
+import { Navigation } from '../components/Navigation'
+import { CreateSubscriptionModal } from '../components/CreateSubscriptionModal'
 
 export function SubscriptionsPage() {
   const [page, setPage] = useState(1)
   const [statusFilter, setStatusFilter] = useState<string>('')
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const queryClient = useQueryClient()
 
   // Fetch subscriptions with filters
@@ -91,16 +94,27 @@ export function SubscriptionsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">Subscriptions</h1>
-            <p className="text-gray-600 mt-1">Manage customer subscriptions</p>
+    <div className="min-h-screen bg-gray-50">
+      {/* Navigation */}
+      <Navigation />
+
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="max-w-7xl mx-auto">
+          {/* Header */}
+          <div className="flex justify-between items-center mb-8">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">Subscriptions</h1>
+              <p className="text-gray-600 mt-1">Manage customer subscriptions</p>
+            </div>
+            <Button onClick={() => setIsCreateModalOpen(true)}>Create Subscription</Button>
           </div>
-          <Button>Create Subscription</Button>
-        </div>
+
+          {/* Create Subscription Modal */}
+          <CreateSubscriptionModal
+            isOpen={isCreateModalOpen}
+            onClose={() => setIsCreateModalOpen(false)}
+          />
 
         {/* Filters */}
         <Card className="p-6 mb-6">
@@ -302,7 +316,8 @@ export function SubscriptionsPage() {
             )}
           </>
         )}
-      </div>
+        </div>
+      </main>
     </div>
   )
 }
