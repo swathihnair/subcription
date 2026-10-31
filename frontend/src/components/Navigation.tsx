@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom'
-import { useAuth } from '@/hooks/useAuth'
-import { Button } from '@/components/ui/Button'
+import { useAuth } from '../hooks/useAuth'
+import { Button } from './ui/Button'
 
 export const Navigation: React.FC = () => {
   const { user, logout } = useAuth()
