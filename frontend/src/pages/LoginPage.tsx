@@ -1,40 +1,25 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Button } from '@/components/ui/Button'
-import { Input } from '@/components/ui/Input'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
-import { apiClient } from '@/services/api'
+import { useAuth } from '../hooks/useAuth'
+import { Button } from '../components/ui/Button'
+import { Input } from '../components/ui/Input'
+import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card'
 
 export const LoginPage: React.FC = () => {
   const navigate = useNavigate()
-  const [email, setEmail] = useState('admin@example.com')
-  const [password, setPassword] = useState('password123')
+  const { login, loading, error: authError } = useAuth()
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
-  const [loading, setLoading] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
-    setLoading(true)
 
     try {
-      const response = await apiClient.post('/auth/login', { email, password })
-      
-      if (response.success && response.data) {
-        // Store tokens and user
-        apiClient.setAuth(response.data.access_token, response.data.refresh_token || '')
-        localStorage.setItem('user', JSON.stringify(response.data.user))
-        
-        // Redirect to dashboard
-        navigate('/dashboard')
-      } else {
-        setError(response.error?.message || 'Login failed')
-      }
+      await login({ email, password })
     } catch (err) {
-      console.error('Login error:', err)
-      setError(err instanceof Error ? err.message : 'Login failed. Please try again.')
-    } finally {
-      setLoading(false)
+      setError(err instanceof Error ? err.message : 'Login failed')
     }
   }
 
@@ -59,11 +44,16 @@ export const LoginPage: React.FC = () => {
                   <p className="text-sm font-medium text-red-800">{error}</p>
                 </div>
               )}
+              {authError && (
+                <div className="rounded-md bg-red-50 p-4">
+                  <p className="text-sm font-medium text-red-800">{authError}</p>
+                </div>
+              )}
 
               <Input
                 type="email"
                 label="Email Address"
-                placeholder="admin@example.com"
+                placeholder="admin@local.dev"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -92,7 +82,7 @@ export const LoginPage: React.FC = () => {
               <div className="text-center text-sm text-gray-600">
                 <p>
                   Demo credentials:<br />
-                  Email: admin@example.com<br />
+                  Email: admin@local.dev<br />
                   Password: password123
                 </p>
               </div>

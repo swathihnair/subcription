@@ -3,10 +3,10 @@
  */
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { subscriptionService } from '@/services/module2'
-import { SubscriptionWithDetails } from '@/types'
-import { Button } from '@/components/ui/Button'
-import { Card } from '@/components/ui/Card'
+import { subscriptionService } from '../services/module2'
+import { SubscriptionWithDetails } from '../types'
+import { Button } from '../components/ui/Button'
+import { Card } from '../components/ui/Card'
 
 export function SubscriptionsPage() {
   const [page, setPage] = useState(1)
