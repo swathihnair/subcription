@@ -8,8 +8,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card'
 export const LoginPage: React.FC = () => {
   const navigate = useNavigate()
   const { login, loading, error: authError } = useAuth()
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const [email, setEmail] = useState('admin@example.com')
+  const [password, setPassword] = useState('password123')
   const [error, setError] = useState<string | null>(null)
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -53,7 +53,7 @@ export const LoginPage: React.FC = () => {
               <Input
                 type="email"
                 label="Email Address"
-                placeholder="admin@local.dev"
+                placeholder="admin@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -82,7 +82,7 @@ export const LoginPage: React.FC = () => {
               <div className="text-center text-sm text-gray-600">
                 <p>
                   Demo credentials:<br />
-                  Email: admin@local.dev<br />
+                  Email: admin@example.com<br />
                   Password: password123
                 </p>
               </div>
