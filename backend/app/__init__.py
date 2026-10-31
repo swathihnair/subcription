@@ -117,8 +117,9 @@ def register_jwt_handlers(app):
     @jwt.user_lookup_loader
     def user_lookup_callback(_jwt_header, jwt_data):
         from app.models import User
+        import uuid
         identity = jwt_data["sub"]
-        return User.query.filter_by(id=identity).first()
+        return User.query.filter_by(id=uuid.UUID(identity) if isinstance(identity, str) else identity).first()
     
     @jwt.additional_claims_loader
     def add_claims_to_jwt(identity):
