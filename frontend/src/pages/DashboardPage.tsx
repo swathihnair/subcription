@@ -1,32 +1,15 @@
 import { useAuth } from '@/hooks/useAuth'
+import { Navigation } from '@/components/Navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 
 export const DashboardPage: React.FC = () => {
-  const { user, logout } = useAuth()
+  const { user } = useAuth()
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">SubscriptIQ</h1>
-            <p className="text-sm text-gray-600">Dashboard</p>
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="text-right">
-              <p className="text-sm font-medium text-gray-900">
-                {user?.first_name || user?.email}
-              </p>
-              <p className="text-xs text-gray-600 capitalize">{user?.role?.name}</p>
-            </div>
-            <Button variant="outline" size="sm" onClick={logout}>
-              Sign Out
-            </Button>
-          </div>
-        </div>
-      </header>
+      {/* Navigation */}
+      <Navigation />
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -46,8 +29,8 @@ export const DashboardPage: React.FC = () => {
               </p>
               <ul className="mt-4 space-y-2 text-sm">
                 <li className="flex items-center">
-                  <span className="inline-block w-3 h-3 bg-yellow-400 rounded-full mr-2"></span>
-                  Module 2: Sales & Subscriptions (In Development)
+                  <span className="inline-block w-3 h-3 bg-green-400 rounded-full mr-2"></span>
+                  Module 2: Sales & Subscriptions (Integrated)
                 </li>
                 <li className="flex items-center">
                   <span className="inline-block w-3 h-3 bg-yellow-400 rounded-full mr-2"></span>
@@ -104,47 +87,63 @@ export const DashboardPage: React.FC = () => {
             </Card>
           </div>
 
-          {/* API Documentation Links */}
+          {/* Getting Started Section */}
           <Card>
             <CardHeader>
               <CardTitle>Getting Started</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-sm text-gray-600 mb-4">
-                Review the documentation to understand the API contracts and data models:
+                Use the navigation menu above to access:
               </p>
-              <ul className="space-y-2 text-sm">
-                <li>
-                  <a
-                    href="https://github.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-primary-600 hover:text-primary-700 underline"
-                  >
-                    📖 API Contracts Documentation
-                  </a>
+              <ul className="space-y-3 text-sm">
+                <li className="flex items-start">
+                  <span className="text-primary-600 mr-2">📦</span>
+                  <span><strong>Products</strong> - Manage your product catalog</span>
                 </li>
-                <li>
-                  <a
-                    href="https://github.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-primary-600 hover:text-primary-700 underline"
-                  >
-                    📊 Database Schema
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="https://github.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-primary-600 hover:text-primary-700 underline"
-                  >
-                    🏗️ Architecture Overview
-                  </a>
+                <li className="flex items-start">
+                  <span className="text-primary-600 mr-2">📋</span>
+                  <span><strong>Subscriptions</strong> - View and manage customer subscriptions</span>
                 </li>
               </ul>
+
+              <div className="mt-6 pt-6 border-t">
+                <p className="text-sm text-gray-600 mb-4">
+                  Review the documentation to understand the API contracts and data models:
+                </p>
+                <ul className="space-y-2 text-sm">
+                  <li>
+                    <a
+                      href="https://github.com/swathihnair/subcription/blob/main/docs/api-contracts.md"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary-600 hover:text-primary-700 underline"
+                    >
+                      📖 API Contracts Documentation
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="https://github.com/swathihnair/subcription/blob/main/docs/database-schema.md"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary-600 hover:text-primary-700 underline"
+                    >
+                      📊 Database Schema
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="https://github.com/swathihnair/subcription/blob/main/docs/architecture.md"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary-600 hover:text-primary-700 underline"
+                    >
+                      🏗️ Architecture Overview
+                    </a>
+                  </li>
+                </ul>
+              </div>
             </CardContent>
           </Card>
         </div>
