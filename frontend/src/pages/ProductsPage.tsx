@@ -2,6 +2,7 @@
  * Products listing and management page - Module 2
  */
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { productService } from '../services/module2'
 import { Product } from '../types'
@@ -9,6 +10,7 @@ import { Button } from '../components/ui/Button'
 import { Card } from '../components/ui/Card'
 
 export function ProductsPage() {
+  const navigate = useNavigate()
   const [page, setPage] = useState(1)
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState<string>('')
@@ -49,7 +51,7 @@ export function ProductsPage() {
             <h1 className="text-3xl font-bold text-gray-900">Products</h1>
             <p className="text-gray-600 mt-1">Manage your product catalog</p>
           </div>
-          <Button>Create Product</Button>
+          <Button onClick={() => navigate('/products/create')}>Create Product</Button>
         </div>
 
         {/* Filters */}

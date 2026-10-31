@@ -2,6 +2,7 @@
  * Subscriptions listing and management page - Module 2
  */
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { subscriptionService } from '../services/module2'
 import { SubscriptionWithDetails } from '../types'
@@ -9,6 +10,7 @@ import { Button } from '../components/ui/Button'
 import { Card } from '../components/ui/Card'
 
 export function SubscriptionsPage() {
+  const navigate = useNavigate()
   const [page, setPage] = useState(1)
   const [statusFilter, setStatusFilter] = useState<string>('')
   const queryClient = useQueryClient()
@@ -99,7 +101,7 @@ export function SubscriptionsPage() {
             <h1 className="text-3xl font-bold text-gray-900">Subscriptions</h1>
             <p className="text-gray-600 mt-1">Manage customer subscriptions</p>
           </div>
-          <Button>Create Subscription</Button>
+          <Button onClick={() => navigate('/subscriptions/create')}>Create Subscription</Button>
         </div>
 
         {/* Filters */}

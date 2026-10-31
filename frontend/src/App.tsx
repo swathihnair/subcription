@@ -4,7 +4,9 @@ import { ProtectedRoute } from './components/ProtectedRoute'
 import { LoginPage } from './pages/LoginPage'
 import { DashboardPage } from './pages/DashboardPage'
 import { ProductsPage } from './pages/ProductsPage'
+import { CreateProductPage } from './pages/CreateProductPage'
 import { SubscriptionsPage } from './pages/SubscriptionsPage'
+import { CreateSubscriptionPage } from './pages/CreateSubscriptionPage'
 import { NotFoundPage } from './pages/NotFoundPage'
 
 const queryClient = new QueryClient({
@@ -39,10 +41,26 @@ function App() {
             }
           />
           <Route
+            path="/products/create"
+            element={
+              <ProtectedRoute>
+                <CreateProductPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/subscriptions"
             element={
               <ProtectedRoute>
                 <SubscriptionsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/subscriptions/create"
+            element={
+              <ProtectedRoute>
+                <CreateSubscriptionPage />
               </ProtectedRoute>
             }
           />
