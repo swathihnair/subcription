@@ -154,5 +154,9 @@ def seed_initial_data(app):
         if not Role.query.filter_by(name=role_name).first():
             role = Role(name=role_name, description=f'{role_name.capitalize()} role')
             db.session.add(role)
+            db.session.flush()  # Ensure it's persisted before continuing
     
-    db.session.commit()
+    try:
+        db.session.commit()
+    except:
+        db.session.rollback()

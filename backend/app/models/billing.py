@@ -1,15 +1,14 @@
 """Billing models: Invoice, Payment - Module 3 owner"""
 from app.extensions import db
 from datetime import datetime
-import uuid
 
 class Invoice(db.Model):
     """Invoice model - Module 3 owner"""
     __tablename__ = 'invoices'
     
-    id = db.Column(db.UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    customer_id = db.Column(db.UUID(as_uuid=True), db.ForeignKey('customers.id'), nullable=False)
-    subscription_id = db.Column(db.UUID(as_uuid=True), db.ForeignKey('subscriptions.id'), nullable=True)
+    id = db.Column(db.Integer, primary_key=True)
+    customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'), nullable=False)
+    subscription_id = db.Column(db.Integer, db.ForeignKey('subscriptions.id'), nullable=True)
     
     invoice_number = db.Column(db.String(100), unique=True, nullable=False, index=True)
     status = db.Column(db.String(50), default='draft', nullable=False)  # draft, sent, viewed, partially_paid, paid, overdue, cancelled
@@ -67,8 +66,8 @@ class InvoiceLineItem(db.Model):
     """Invoice line item model - Module 3 owner"""
     __tablename__ = 'invoice_line_items'
     
-    id = db.Column(db.UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    invoice_id = db.Column(db.UUID(as_uuid=True), db.ForeignKey('invoices.id'), nullable=False)
+    id = db.Column(db.Integer, primary_key=True)
+    invoice_id = db.Column(db.Integer, db.ForeignKey('invoices.id'), nullable=False)
     
     description = db.Column(db.String(500), nullable=False)
     quantity = db.Column(db.Numeric(10, 2), nullable=False, default=1)
@@ -104,9 +103,9 @@ class Payment(db.Model):
     """Payment model - Module 3 owner"""
     __tablename__ = 'payments'
     
-    id = db.Column(db.UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    invoice_id = db.Column(db.UUID(as_uuid=True), db.ForeignKey('invoices.id'), nullable=False)
-    customer_id = db.Column(db.UUID(as_uuid=True), db.ForeignKey('customers.id'), nullable=False)
+    id = db.Column(db.Integer, primary_key=True)
+    invoice_id = db.Column(db.Integer, db.ForeignKey('invoices.id'), nullable=False)
+    customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'), nullable=False)
     
     payment_number = db.Column(db.String(100), unique=True, nullable=False, index=True)
     status = db.Column(db.String(50), default='pending', nullable=False)  # pending, processing, completed, failed, refunded

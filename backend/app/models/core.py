@@ -1,13 +1,12 @@
 """Core business models: Customer, Product, Plan, Quotation, Subscription"""
 from app.extensions import db
 from datetime import datetime
-import uuid
 
 class Customer(db.Model):
     """Customer model - Module 2 owner"""
     __tablename__ = 'customers'
     
-    id = db.Column(db.UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False, index=True)
     status = db.Column(db.String(50), default='active', nullable=False)  # active, inactive, churned
@@ -50,7 +49,7 @@ class Product(db.Model):
     """Product model - Module 2 owner"""
     __tablename__ = 'products'
     
-    id = db.Column(db.UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255), nullable=False)
     sku = db.Column(db.String(100), unique=True, nullable=False, index=True)
     description = db.Column(db.Text)
@@ -85,8 +84,8 @@ class Plan(db.Model):
     """Plan model - Module 2 owner"""
     __tablename__ = 'plans'
     
-    id = db.Column(db.UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    product_id = db.Column(db.UUID(as_uuid=True), db.ForeignKey('products.id'), nullable=False)
+    id = db.Column(db.Integer, primary_key=True)
+    product_id = db.Column(db.Integer, db.ForeignKey('products.id'), nullable=False)
     name = db.Column(db.String(255), nullable=False)
     description = db.Column(db.Text)
     status = db.Column(db.String(50), default='active', nullable=False)
@@ -125,9 +124,9 @@ class Quotation(db.Model):
     """Quotation model - Module 2 owner"""
     __tablename__ = 'quotations'
     
-    id = db.Column(db.UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    customer_id = db.Column(db.UUID(as_uuid=True), db.ForeignKey('customers.id'), nullable=False)
-    plan_id = db.Column(db.UUID(as_uuid=True), db.ForeignKey('plans.id'), nullable=False)
+    id = db.Column(db.Integer, primary_key=True)
+    customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'), nullable=False)
+    plan_id = db.Column(db.Integer, db.ForeignKey('plans.id'), nullable=False)
     
     quote_number = db.Column(db.String(100), unique=True, nullable=False, index=True)
     status = db.Column(db.String(50), default='draft', nullable=False)  # draft, sent, accepted, rejected, expired
@@ -164,9 +163,9 @@ class Subscription(db.Model):
     """Subscription model - Module 2/3 owner (Module 2 leads)"""
     __tablename__ = 'subscriptions'
     
-    id = db.Column(db.UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    customer_id = db.Column(db.UUID(as_uuid=True), db.ForeignKey('customers.id'), nullable=False)
-    plan_id = db.Column(db.UUID(as_uuid=True), db.ForeignKey('plans.id'), nullable=False)
+    id = db.Column(db.Integer, primary_key=True)
+    customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'), nullable=False)
+    plan_id = db.Column(db.Integer, db.ForeignKey('plans.id'), nullable=False)
     
     subscription_number = db.Column(db.String(100), unique=True, nullable=False, index=True)
     status = db.Column(db.String(50), default='active', nullable=False)  # active, suspended, cancelled, churned

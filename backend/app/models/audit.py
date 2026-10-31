@@ -1,18 +1,17 @@
 """Audit and notification models - Module 4 owner"""
 from app.extensions import db
 from datetime import datetime
-import uuid
 
 class AuditLog(db.Model):
     """Audit log model - Module 4 owner"""
     __tablename__ = 'audit_logs'
     
-    id = db.Column(db.UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    user_id = db.Column(db.UUID(as_uuid=True), db.ForeignKey('users.id'), nullable=True)
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
     
     action = db.Column(db.String(100), nullable=False)  # created, updated, deleted, login, logout
     entity_type = db.Column(db.String(100), nullable=False)  # User, Customer, Invoice, etc.
-    entity_id = db.Column(db.UUID(as_uuid=True), nullable=True)
+    entity_id = db.Column(db.Integer, nullable=True)
     
     # Change tracking
     old_values = db.Column(db.JSON)
@@ -45,9 +44,9 @@ class Notification(db.Model):
     """Notification model - Module 4 owner"""
     __tablename__ = 'notifications'
     
-    id = db.Column(db.UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    customer_id = db.Column(db.UUID(as_uuid=True), db.ForeignKey('customers.id'), nullable=True)
-    user_id = db.Column(db.UUID(as_uuid=True), db.ForeignKey('users.id'), nullable=True)
+    id = db.Column(db.Integer, primary_key=True)
+    customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'), nullable=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
     
     type = db.Column(db.String(100), nullable=False)  # invoice_due, payment_received, subscription_expiring, etc.
     subject = db.Column(db.String(255), nullable=False)

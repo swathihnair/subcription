@@ -1,14 +1,13 @@
 """User and Role models"""
 from app.extensions import db
 from datetime import datetime
-import uuid
 from werkzeug.security import generate_password_hash, check_password_hash
 
 class Role(db.Model):
     """User role model"""
     __tablename__ = 'roles'
     
-    id = db.Column(db.UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), unique=True, nullable=False, index=True)
     description = db.Column(db.String(255))
     created_at = db.Column(db.DateTime(timezone=True), default=datetime.utcnow)
@@ -31,7 +30,7 @@ class User(db.Model):
     """User model"""
     __tablename__ = 'users'
     
-    id = db.Column(db.UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False, index=True)
     password_hash = db.Column(db.String(255), nullable=False)
     first_name = db.Column(db.String(50))
@@ -40,8 +39,8 @@ class User(db.Model):
     is_deleted = db.Column(db.Boolean, default=False)
     
     # Foreign Keys
-    role_id = db.Column(db.UUID(as_uuid=True), db.ForeignKey('roles.id'), nullable=False)
-    customer_id = db.Column(db.UUID(as_uuid=True), db.ForeignKey('customers.id'), nullable=True)
+    role_id = db.Column(db.Integer, db.ForeignKey('roles.id'), nullable=False)
+    customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'), nullable=True)
     
     # Timestamps
     created_at = db.Column(db.DateTime(timezone=True), default=datetime.utcnow)

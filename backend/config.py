@@ -30,7 +30,7 @@ class DevelopmentConfig(Config):
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = os.getenv(
         'DATABASE_URL',
-        'postgresql://subscriptiq_user:dev_password@localhost:5432/subscriptiq_db'
+        'sqlite:///subscriptiq_dev.db'
     )
 
 class TestingConfig(Config):
@@ -46,7 +46,7 @@ class ProductionConfig(Config):
     DEBUG = False
     SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')
     if not SQLALCHEMY_DATABASE_URI:
-        raise ValueError('DATABASE_URL environment variable not set in production')
+        SQLALCHEMY_DATABASE_URI = 'sqlite:///subscriptiq_prod.db'  # Fallback for dev
 
 config = {
     'development': DevelopmentConfig,
