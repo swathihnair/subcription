@@ -75,7 +75,7 @@ export function CreateSubscriptionPage() {
     })
   }
 
-  const selectedPlan = plansData?.data?.items?.find((p: any) => p.id === formData.plan_id)
+  const selectedPlan = plansData?.data?.find((p: any) => p.id === formData.plan_id)
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">
@@ -103,7 +103,7 @@ export function CreateSubscriptionPage() {
                   required
                 >
                   <option value="">Select a customer</option>
-                  {customersData?.data?.items?.map((customer: any) => (
+                  {customersData?.data?.map((customer: any) => (
                     <option key={customer.id} value={customer.id}>
                       {customer.name} ({customer.email})
                     </option>
@@ -128,7 +128,7 @@ export function CreateSubscriptionPage() {
                   required
                 >
                   <option value="">Select a product</option>
-                  {productsData?.data?.items?.map((product: any) => (
+                  {productsData?.data?.map((product: any) => (
                     <option key={product.id} value={product.id}>
                       {product.name} - ${product.base_price}
                     </option>
@@ -148,7 +148,7 @@ export function CreateSubscriptionPage() {
                   disabled={!selectedProductId}
                 >
                   <option value="">Select a plan</option>
-                  {plansData?.data?.items?.map((plan: any) => (
+                  {plansData?.data?.map((plan: any) => (
                     <option key={plan.id} value={plan.id}>
                       {plan.name} - ${plan.price}/{plan.billing_cycle}
                     </option>
