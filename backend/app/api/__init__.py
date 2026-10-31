@@ -13,3 +13,6 @@ def health_check():
             'version': '1.0.0'
         }
     }), 200
+
+# Import routes to register them with the blueprint
+from app.api import customers, products, plans, quotations, subscriptions

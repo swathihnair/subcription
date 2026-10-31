@@ -71,7 +71,12 @@ class User(db.Model):
         role_permissions = {
             'admin': ['all'],
             'finance': ['view_invoices', 'manage_payments', 'view_analytics'],
-            'sales': ['manage_customers', 'manage_products', 'manage_subscriptions'],
+            'sales': [
+                'manage_customers', 
+                'manage_products', 
+                'manage_subscriptions',
+                'manage_quotations'
+            ],
             'customer': ['view_own_subscriptions', 'view_own_invoices']
         }
         
