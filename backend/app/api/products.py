@@ -13,7 +13,7 @@ import uuid
 def get_products():
     """Get list of products with filtering and pagination"""
     user_id = get_jwt_identity()
-    user = User.query.get(user_id)
+    user = User.query.filter_by(id=uuid.UUID(user_id) if isinstance(user_id, str) else user_id).first()
     
     # Check permission
     if not user.has_permission('manage_products') and not user.has_permission('all'):
@@ -77,7 +77,7 @@ def get_products():
 def get_product(product_id):
     """Get single product by ID with associated plans"""
     user_id = get_jwt_identity()
-    user = User.query.get(user_id)
+    user = User.query.filter_by(id=uuid.UUID(user_id) if isinstance(user_id, str) else user_id).first()
     
     # Check permission
     if not user.has_permission('manage_products') and not user.has_permission('all'):
@@ -124,7 +124,7 @@ def get_product(product_id):
 def create_product():
     """Create a new product"""
     user_id = get_jwt_identity()
-    user = User.query.get(user_id)
+    user = User.query.filter_by(id=uuid.UUID(user_id) if isinstance(user_id, str) else user_id).first()
     
     # Check permission
     if not user.has_permission('manage_products') and not user.has_permission('all'):
