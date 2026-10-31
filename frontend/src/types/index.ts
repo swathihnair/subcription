@@ -140,6 +140,115 @@ export interface Quotation {
   valid_until?: string
   created_at: string
   updated_at: string
+  customer?: Customer
+  plan?: Plan
+}
+
+// Module 2 - Create/Update payloads
+export interface CreateCustomerPayload {
+  name: string
+  email: string
+  phone?: string
+  billing_address?: string
+  shipping_address?: string
+  status?: 'active' | 'inactive'
+}
+
+export interface UpdateCustomerPayload {
+  name?: string
+  email?: string
+  phone?: string
+  billing_address?: string
+  shipping_address?: string
+  status?: string
+}
+
+export interface CreateProductPayload {
+  name: string
+  sku: string
+  description?: string
+  base_price: number
+  status?: 'active' | 'draft'
+}
+
+export interface UpdateProductPayload {
+  name?: string
+  sku?: string
+  description?: string
+  base_price?: number
+  status?: string
+}
+
+export interface CreatePlanPayload {
+  product_id: string
+  name: string
+  description?: string
+  price: number
+  billing_cycle: 'weekly' | 'monthly' | 'quarterly' | 'annually'
+  setup_fee?: number
+  status?: 'active'
+}
+
+export interface UpdatePlanPayload {
+  name?: string
+  description?: string
+  price?: number
+  billing_cycle?: 'weekly' | 'monthly' | 'quarterly' | 'annually'
+  setup_fee?: number
+  status?: string
+}
+
+export interface CreateQuotationPayload {
+  customer_id: string
+  plan_id: string
+  amount: number
+  discount_amount?: number
+  total_amount: number
+  valid_until?: string
+}
+
+export interface UpdateQuotationPayload {
+  amount?: number
+  discount_amount?: number
+  total_amount?: number
+  valid_until?: string
+}
+
+export interface CreateSubscriptionPayload {
+  customer_id: string
+  plan_id: string
+  start_date?: string
+  status?: 'active' | 'trialing'
+  auto_renew?: boolean
+}
+
+export interface UpdateSubscriptionPayload {
+  auto_renew?: boolean
+  end_date?: string | null
+}
+
+export interface CancelSubscriptionPayload {
+  cancel_immediately?: boolean
+}
+
+// Extended types with relations
+export interface ProductWithPlans extends Product {
+  plans?: Plan[]
+}
+
+export interface PlanWithProduct extends Plan {
+  product?: Product
+}
+
+export interface SubscriptionWithDetails extends Subscription {
+  customer?: Customer
+  plan?: Plan
+  invoices?: Invoice[]
+}
+
+export interface QuotationWithDetails extends Quotation {
+  customer?: Customer
+  plan?: Plan
 }
 
 // Feature-specific types

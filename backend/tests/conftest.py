@@ -67,3 +67,8 @@ def auth_headers(client, admin_user):
     )
     token = response.json['data']['access_token']
     return {'Authorization': f'Bearer {token}'}
+
+@pytest.fixture
+def db_session(app):
+    """Database session fixture"""
+    return db.session
